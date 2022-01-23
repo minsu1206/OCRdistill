@@ -7,6 +7,8 @@
 dataload.py <br>
 visualize.py
 
+### Dataset
+ICDAR2015
 
 ### TODO
 - [ ] Paper review : Text Detection
