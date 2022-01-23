@@ -1,5 +1,13 @@
 # OCRdistill
 
+### Code Structure
+<br>
+[Folder] Training images <br>
+[Folder] Training labels <br>
+dataload.py <br>
+visualize.py
+
+
 ### TODO
 - [ ] Paper review : Text Detection
 - [ ] Paper review : Knowledge Distillation
