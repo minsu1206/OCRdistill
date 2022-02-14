@@ -54,9 +54,13 @@ def train():
             teacher_pred = teacher(img)
 
         """
-            student_pred = (N, 4) torch tensor
-            teacher_pred = (M, 4) torch tensor
+            student_pred = detection box, (B, N, 4 or 5, 8 or 9) torch tensor
+                            : x, y, w, h, conf(score)
+                            : 
+            teacher_pred = detection box, (B, M, 4 or 5, 8 or 9 ) torch tensor
+                            : x, y, w, h, conf(score)
         """
+
 
 
 

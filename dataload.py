@@ -35,7 +35,7 @@ class Augment:
             iaa.MultiplyAndAddToBrightness(mul=(0.8, 1.2), add=(-30, 30)),
             iaa.Fliplr(0.5),
             iaa.Flipud(0.5),
-            iaa.Affine(scale={"x":(0.8, 1.2), "y":(0.8, 1.2)}),
+            iaa.Affine(scale={"x": (0.8, 1.2), "y": (0.8, 1.2)}),
             iaa.Affine(rotate=(-15, 15)),
             iaa.Affine(shear=(-15, 15)),
             iaa.Resize((self.img_size[0], self.img_size[1]))

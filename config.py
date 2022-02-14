@@ -17,22 +17,27 @@ def get_parse():
     args = argparse.Namespace()
 
     # Train Dataset config
-    args.dataset_path = ''
-    args.annotation_path = ''
+    args.dataset_path = 'ch4_training_images'
+    args.annotation_path = 'ch4_training_localization_transcription_gt'
     args.split_ratio = 0.8
-    args.img_size = 1280
+    args.img_size = (608, 608)
 
     # Training config - KD
     args.T_model = 'TextFuseNet_resnext101'
-    args.S_model = 'CRAFT'
+    args.S_model = 'yolov3'
+    # args.S_model = 'SSDLite'
     args.method = [0]
 
     # Training config - settings
     args.use_gpu = True
-    args.batch_size = 8
+    args.batch_size = 2
     args.epoch = 200
     args.learning_rate = 0.001
 
+    args.negative_ratio = 0.75      # according to OHEM, pos:neg = 1:3
+    args.negative_mining = False
+
+    args.teacher_bound_weight = 0.5
 
     return args
 
