@@ -20,10 +20,10 @@ def get_parse():
     args.dataset_path = 'ch4_training_images'
     args.annotation_path = 'ch4_training_localization_transcription_gt'
     args.split_ratio = 0.8
-    args.img_size = (608, 608)
+    # args.img_size = (608, 608)
 
     # Training config - KD
-    args.T_model = 'TextFuseNet_resnext101'
+    args.T_model = 'CharNet'
     args.S_model = 'yolov3'
     # args.S_model = 'SSDLite'
     args.method = [0]

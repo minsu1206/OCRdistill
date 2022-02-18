@@ -29,8 +29,7 @@ from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
 
 
 class Augment:
-    def __init__(self, img_size, to_tensor=True):
-        self.img_size = img_size
+    def __init__(self, teacher_image_size, student_image_size, to_tensor=True):
         self.seq = iaa.Sequential([
             iaa.MultiplyAndAddToBrightness(mul=(0.8, 1.2), add=(-30, 30)),
             iaa.Fliplr(0.5),
@@ -38,7 +37,20 @@ class Augment:
             iaa.Affine(scale={"x": (0.8, 1.2), "y": (0.8, 1.2)}),
             iaa.Affine(rotate=(-15, 15)),
             iaa.Affine(shear=(-15, 15)),
-            iaa.Resize((self.img_size[0], self.img_size[1]))
+        ])
+        self.teacher_image_size = teacher_image_size
+        self.student_image_size = student_image_size
+
+        if isinstance(teacher_image_size, int):
+            teacher_image_size = (teacher_image_size, teacher_image_size)
+        if isinstance(student_image_size, int):
+            student_image_size = (student_image_size, student_image_size)
+
+        self.teacher_resize = iaa.Sequential([
+            iaa.Resize({"height": teacher_image_size[0], "width": teacher_image_size[1]})
+        ])
+        self.student_resize = iaa.Sequential([
+            iaa.Resize({"height": student_image_size[0], "width": student_image_size[1]})
         ])
         self.to_tensor = True
         self.compose = transforms.Compose([transforms.ToTensor()])
@@ -48,10 +60,34 @@ class Augment:
         shape = image.shape[:2]
         bboxes_ia = self.bbox_list2ia(shape, bboxes)
         image_aug, bbox_aug = self.seq(image=image, bounding_boxes=bboxes_ia)
+
+        # If teacher model == CharNet
+        h, w = shape
+        scale = max(h, w) / float(self.teacher_image_size)
+        image_resize_height = int(round(h / scale / 128) * 128)
+        image_resize_width = int(round(w / scale / 128) * 128)
+        scale_h = float(h) / image_resize_height
+        scale_w = float(w) / image_resize_width
+        scale_info = [scale_w, scale_h, w, h]
+
+        self.teacher_resize = iaa.Sequential([
+            iaa.Resize((image_resize_height, image_resize_width))
+        ])
+        self.teacher_resize = iaa.Sequential([
+            iaa.Resize({"height": image_resize_height, "width": image_resize_width})
+        ])
+
+        teacher_image_aug, teacher_box_aug = self.teacher_resize(image=image_aug, bounding_boxes=bbox_aug)
+
+        student_image_aug, student_box_aug = self.student_resize(image=image_aug, bounding_boxes=bbox_aug)
+
         if self.to_tensor:
-            image_aug = self.img_ia2tensor(image_aug)
-            bbox_aug = self.bbox_ia2tensor(bbox_aug)
-        return image_aug, bbox_aug
+            teacher_image_aug = self.img_ia2tensor(teacher_image_aug)
+            teacher_box_aug = self.bbox_ia2tensor(teacher_box_aug)
+            student_image_aug = self.img_ia2tensor(student_image_aug)
+            student_box_aug = self.bbox_ia2tensor(student_box_aug)
+
+        return teacher_image_aug, teacher_box_aug, student_image_aug, student_box_aug, scale_info
 
     @staticmethod
     def bbox_list2ia(shape, bbox: list):
@@ -119,28 +155,34 @@ class ICDAR_Dataset(Dataset):
                 # if 'ff' in vals[0]:
                 #     print('vals[0]', vals[0])
                 #     vals[0] = vals[0][6:]
-
                 for val in vals[:-1]:
                     one_word.append(int(float(val)))
                 label.append(one_word)
 
-        image_aug, label_aug = self.transform.aug(image, label)
-        return image_aug, label_aug
+        teacher_image_aug, teacher_label_aug, student_image_aug, student_label_aug, scale_info = self.transform.aug(image, label)
+        return teacher_image_aug, teacher_label_aug, student_image_aug, student_label_aug, scale_info
 
     @staticmethod
     def collate_fn(batch):
         """
         Each bbox label has different shape (N, 4) (because each image has different # of objects)
         """
-        images = []
-        box_labels = []
+        teacher_images = []
+        teacher_box_labels = []
+        student_images = []
+        student_box_labels = []
+        charnet_scale_infos = []
         for b in batch:
-            images.append(b[0])
-            box_labels.append(b[1])
-        
-        images = torch.stack(images, dim=0)
-        return images, box_labels
+            teacher_images.append(b[0])
+            teacher_box_labels.append(b[1])
+            student_images.append(b[2])
+            student_box_labels.append(b[3])
+            charnet_scale_infos.append(b[4])
 
+        # teacher_images = torch.stack(teacher_images, dim=0)
+        student_images = torch.stack(student_images, dim=0)
+        # label -> torch.stack  : impossible
+        return teacher_images, teacher_box_labels, student_images, student_box_labels, charnet_scale_infos
 
 
 if __name__ == '__main__':
@@ -150,35 +192,38 @@ if __name__ == '__main__':
     EX)
 
     """
-    target_img_size = (640, 640)
-    custom_augment = Augment(img_size=target_img_size)
-    custom_dataset = ICDAR_Dataset(img_dir='ch4_training_images',
-                                   annotation_dir='ch4_training_localization_transcription_gt',
-                                   transform=custom_augment)
-
-    one_img, one_label = custom_dataset[0]
-    
-    # Visualize Test
-    import numpy as np
-    from visualize import bbox_visualize
-    one_img = np.array(one_img) * 255
-    one_img = np.transpose(one_img, (1, 2, 0)).astype(np.uint8).copy()
-
-    vis_img = bbox_visualize(one_img, one_label)
-    cv2.imshow('Example', vis_img)
-    cv2.waitKey(0)
-
-    # Dataloader
-    from torch.utils.data import DataLoader
-
-    custom_dataloader = DataLoader(custom_dataset, batch_size=4, shuffle=True, collate_fn=custom_dataset.collate_fn)
-
-    for i, (img, label) in enumerate(custom_dataloader):
-        print("This is index :", i)
-        print("This is Img Tensor : ", type(img), img.shape)
-        print("This is Label Tensor : ", len(label), label[0].shape, label[1].shape, label[2].shape, label[3].shape)
-
-        break
+    pass
+    # Check fordebug.py for reference
+    # Old version
+    # target_img_size = (640, 640)
+    # custom_augment = Augment(img_size=target_img_size)
+    # custom_dataset = ICDAR_Dataset(img_dir='ch4_training_images',
+    #                                annotation_dir='ch4_training_localization_transcription_gt',
+    #                                transform=custom_augment)
+    #
+    # one_img, one_label = custom_dataset[0]
+    #
+    # # Visualize Test
+    # import numpy as np
+    # from visualize import bbox_visualize
+    # one_img = np.array(one_img) * 255
+    # one_img = np.transpose(one_img, (1, 2, 0)).astype(np.uint8).copy()
+    #
+    # vis_img = bbox_visualize(one_img, one_label)
+    # cv2.imshow('Example', vis_img)
+    # cv2.waitKey(0)
+    #
+    # # Dataloader
+    # from torch.utils.data import DataLoader
+    #
+    # custom_dataloader = DataLoader(custom_dataset, batch_size=4, shuffle=True, collate_fn=custom_dataset.collate_fn)
+    #
+    # for i, (img, label) in enumerate(custom_dataloader):
+    #     print("This is index :", i)
+    #     print("This is Img Tensor : ", type(img), img.shape)
+    #     print("This is Label Tensor : ", len(label), label[0].shape, label[1].shape, label[2].shape, label[3].shape)
+    #
+        # break
 
     
     
