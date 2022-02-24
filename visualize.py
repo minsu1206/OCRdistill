@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 
-
-
 def bbox_visualize(img, bbox):
     """
     img : image ndarray

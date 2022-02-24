@@ -17,8 +17,8 @@ def get_parse():
     args = argparse.Namespace()
 
     # Train Dataset config
-    args.dataset_path = 'ch4_training_images'
-    args.annotation_path = 'ch4_training_localization_transcription_gt'
+    args.dataset_path = '../ICDAR2015/COCOver/Train/ICDAR2015_Train'
+    args.annotation_path = '../ICDAR2015/ch4_training_localization_transcription_gt'
     args.split_ratio = 0.8
     args.img_size = (608, 608)
 

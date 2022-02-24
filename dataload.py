@@ -152,8 +152,8 @@ if __name__ == '__main__':
     """
     target_img_size = (640, 640)
     custom_augment = Augment(img_size=target_img_size)
-    custom_dataset = ICDAR_Dataset(img_dir='ch4_training_images',
-                                   annotation_dir='ch4_training_localization_transcription_gt',
+    custom_dataset = ICDAR_Dataset(img_dir='../ICDAR2015/COCOver/Train/ICDAR2015_Train',
+                                   annotation_dir='../ICDAR2015/ch4_training_localization_transcription_gt',
                                    transform=custom_augment)
 
     one_img, one_label = custom_dataset[0]
