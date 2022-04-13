@@ -103,7 +103,12 @@ File name with
 ---
 
 <br></br>
-## Project Result
+## Project Result & Conclusion
+<img src=result.PNG>
+
+- Bold value means distilled model get higher value than YOLOv5 N (trained with distillation)
+- In our experiments, xn_maskdiff_PFI was the best method.
+- **Despite of very slight improvement, we could conclude that the knowledge distillation method is also effective for text detection.**
 
 ---
 <br></br>
