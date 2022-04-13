@@ -2,6 +2,8 @@
 YAI (Yonsei University Artificial Intelligence) & LOMIN(https://lomin.ai/)
 
 
+> Last Update: 22/04/14 by MINSU KIM
+
 <br></br>
 ## Structure
 
