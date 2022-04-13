@@ -101,6 +101,11 @@ File name with
 - PFI : Use Distillation Method [3]
 <br></br>
 ---
+
+<br></br>
+## Project Result
+
+---
 <br></br>
 ## RUN CODE
 > python distill_ln_4maskdiff.py --cfg_teacher models/yolov5l.yaml --cfg_student models/yolov5n.yaml --teacher_weights teacher/l/weights/best.pt --student_weights '' --data data/ICDAR.yaml --device 0 --name ln_4maskdiff
