@@ -3,6 +3,13 @@ YAI (Yonsei University Artificial Intelligence) & LOMIN(https://lomin.ai/)
 
 
 > Last Update: 22/04/14 by MINSU KIM
+> <br>
+> Team Member: <br>
+> &nbsp; &nbsp; &nbsp; &nbsp; Minsu Kim (Leader) <br>
+> &nbsp; &nbsp; &nbsp; &nbsp; Chanmi Lee <br> 
+> &nbsp; &nbsp; &nbsp; &nbsp; Yongjun An <br>
+> &nbsp; &nbsp; &nbsp; &nbsp; Sujung Park <br>
+
 
 <br></br>
 ## Structure
