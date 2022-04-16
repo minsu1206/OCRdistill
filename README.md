@@ -103,12 +103,15 @@ File name with
 ---
 
 <br></br>
-## Project Result & Conclusion
+## Project Result & Discussion
 <img src=result.PNG>
 
 - Bold value means distilled model get higher value than YOLOv5 N (trained with distillation)
 - In our experiments, xn_maskdiff_PFI was the best method.
 - **Despite of very slight improvement, we could conclude that the knowledge distillation method is also effective for text detection.**
+- Indeed, most text detection models takes an 1280x1280 or more higher resolution image as their input, But we used 640x640 image as input because training with high resolution model took lots of time, considering our GPU settings. We consider the fact that bounding boxes of text can be very small at 640x640 as cause of YOLO5 models' relatively low performance.
+- Dataset size for training is 1000, which is not enough to train model well. At future work, we should use ICDAR 2017.
+
 
 ---
 <br></br>
