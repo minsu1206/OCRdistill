@@ -8,7 +8,7 @@ YAI (Yonsei University Artificial Intelligence) & LOMIN(https://lomin.ai/)
 > &nbsp; &nbsp; &nbsp; &nbsp; Minsu Kim (Leader) <br>
 > &nbsp; &nbsp; &nbsp; &nbsp; Chanmi Lee <br> 
 > &nbsp; &nbsp; &nbsp; &nbsp; Yongjun An <br>
-> &nbsp; &nbsp; &nbsp; &nbsp; Sujung Park <br>
+> &nbsp; &nbsp; &nbsp; &nbsp; Seojung Park <br>
 
 
 <br></br>
