@@ -87,10 +87,13 @@ legacy  # not used
     - FitNets: Hints for thin deep nets .
 2. Masking ROI features 
     - General Instance Distillation for Object Detection
+        <img src=GID.png width=80%>
     - Distilling Object Detectors via Decoupled Features
+        <img src=DecoupleMask.png width=80%>
 3. Prediction guided feature difference
     - Knowledge Distillation for Object Detection via Rank Mimicking and Prediction-guided Feature Imitation
-
+        <img src=PFI.png width=80%>
+        
 <br></br>
 #### Distillation Experiments :
 File name with
